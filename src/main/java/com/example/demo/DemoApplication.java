@@ -4,9 +4,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.text.MessageFormat;
 import java.util.List;
@@ -19,8 +29,17 @@ interface Babu<T> {
 @EnableFeignClients
 class DemoApplication {
 
+
     public static void main(String[] args) {
         SpringApplication.run(DemoApplication.class, args);
+    }
+}
+
+@Configuration
+class Con {
+    @Bean
+    public SpringWebClientErrorDecoder errorDecoder() {
+        return new SpringWebClientErrorDecoder();
     }
 }
 
@@ -43,10 +62,24 @@ class Controll {
     }
 
     @GetMapping(path = "/users")
-    public List<Users> getUsers() {
+    public ResponseEntity<List<Users>> getUsers() {
         return fn.getUsers();
     }
 
+}
+
+@ControllerAdvice
+class RestResponseEntityExceptionHandler
+        extends ResponseEntityExceptionHandler {
+
+    @ExceptionHandler(value
+            = {IllegalArgumentException.class, IllegalStateException.class, HttpClientErrorException.class})
+    protected ResponseEntity<Object> handleConflict(
+            RuntimeException ex, WebRequest request) {
+        String bodyOfResponse = "This should be application specific";
+        return handleExceptionInternal(ex, bodyOfResponse,
+                new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
 }
 
 @Service
