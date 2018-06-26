@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,9 +20,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.text.MessageFormat;
 import java.util.List;
 
-interface Babu<T> {
-    void hello(List<T> listBabu);
-}
 
 @SpringBootApplication
 @EnableFeignClients
@@ -49,8 +45,6 @@ class Controll {
     @Autowired
     private Fign fn;
 
-    @Autowired
-    private List<Babu<?>> babus;
 
     @Autowired
     private
@@ -82,32 +76,4 @@ class RestResponseEntityExceptionHandler
     }
 }
 
-@Service
-class M implements Babu<String> {
 
-
-    @Override
-    public void hello(List<String> listBabu) {
-
-    }
-}
-
-@Service
-class M2 implements Babu<String> {
-
-
-    @Override
-    public void hello(List<String> listBabu) {
-
-    }
-}
-
-@Service
-class M3 implements Babu<String> {
-
-
-    @Override
-    public void hello(List<String> listBabu) {
-
-    }
-}
